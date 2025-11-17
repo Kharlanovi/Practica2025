@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Админ – Товары{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Управление товарами</h1>
+
+    <a href="/admin/products/add" class="btn btn-success my-3">Добавить товар</a>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Фото</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in products %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.price }} ₽</td>
+                <td><img src="{{ url_for('static', filename=p.image_url) }}" width="80"></td>
+                <td>
+                    <a href="/admin/products/edit/{{ p.id }}" class="btn btn-primary btn-sm">Изменить</a>
+                   <button onclick="deleteProduct({{p.id}})" class="btn btn-danger btn-sm">Удалить</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+function deleteProduct(id) {
+
+    fetch('/admin/products/delete/' + id, { method: 'POST' })
+        .then(r => r.json())
+        .then(() => location.reload());
+}
+</script>
+{% endblock %}

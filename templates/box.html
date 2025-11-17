@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Корзина - Стройматериалы{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Корзина</h1>
+    
+    <div id="cart-content">
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadCart();
+});
+
+function loadCart() {
+    fetch('/api/cart')
+        .then(response => response.json())
+        .then(cart => {
+            displayCart(cart);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showEmptyCart();
+        });
+}
+
+function displayCart(cart) {
+    const cartContent = document.getElementById('cart-content');
+    
+    if (cart.items.length === 0) {
+        showEmptyCart();
+        return;
+    }
+    
+    let itemsHtml = '';
+    cart.items.forEach(item => {
+        itemsHtml += `
+            <div class="card mb-3 cart-item" data-item-id="${item.id}">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <img src="{{ url_for('static', filename='') }}${item.image_url}" 
+                                 class="img-fluid rounded" alt="${item.name}" style="height: 80px; object-fit: cover;">
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="card-title mb-1">${item.name}</h6>
+                            <p class="text-muted mb-0">${item.price}₽/шт</p>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group" style="max-width: 150px;">
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        onclick="updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
+                                <input type="number" class="form-control text-center" 
+                                       value="${item.quantity}" min="1" 
+                                       onchange="updateQuantity('${item.id}', this.value)">
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        onclick="updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <h6 class="text-primary mb-0">${item.total}₽</h6>
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn btn-danger btn-sm" 
+                                    onclick="removeFromCart('${item.id}')">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    cartContent.innerHTML = `
+        <div class="row">
+            <div class="col-lg-8">
+                ${itemsHtml}
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Итого</h5>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Товары (${cart.items.reduce((sum, item) => sum + item.quantity, 0)} шт.):</span>
+                            <span>${cart.total}₽</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Общая сумма:</strong>
+                            <strong class="text-primary">${cart.total}₽</strong>
+                        </div>
+                        <button class="btn btn-success w-100 mb-2" onclick="checkout()">
+                            Оформить заказ
+                        </button>
+                        <button class="btn btn-outline-danger w-100" onclick="clearCart()">
+                            Очистить корзину
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function showEmptyCart() {
+    const cartContent = document.getElementById('cart-content');
+    cartContent.innerHTML = `
+        <div class="text-center py-5">
+            <h2>В корзине пусто</h2>
+            <p class="text-muted">Перейдите в каталог, чтобы добавить нужные товары.</p>
+            <a href="{{ url_for('catalog') }}" class="btn btn-primary">Перейти в каталог</a>
+        </div>
+    `;
+}
+
+function updateQuantity(itemId, newQuantity) {
+    if (newQuantity < 1) {
+        removeFromCart(itemId);
+        return;
+    }
+    
+    fetch(`/api/cart/update/${itemId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ quantity: parseInt(newQuantity) })
+    })
+    .then(response => response.json())
+    .then(() => {
+        loadCart();
+        showAlert('Корзина обновлена', 'success');
+    });
+}
+
+function removeFromCart(itemId) {
+    fetch(`/api/cart/remove/${itemId}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(() => {
+        loadCart();
+        showAlert('Товар удален из корзины', 'success');
+    });
+}
+
+function clearCart() {
+    fetch('/api/cart/clear', {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(() => {
+        loadCart();
+        showAlert('Корзина очищена', 'success');
+    });
+}
+
+function checkout() {
+    alert('Функция оформления заказа будет реализована позже!');
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 80px; right: 20px; z-index: 1050; min-width: 300px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) alertDiv.remove();
+    }, 3000);
+}
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Редактировать товар{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ "Редактирование товара" if product else "Добавление товара" }}</h2>
+
+    <form id="productForm" method="POST">
+        <div class="mb-3">
+            <label class="form-label">Название:</label>
+            <input name="name" class="form-control" value="{{ product.name if product else '' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Цена:</label>
+            <input type="number" name="price" class="form-control" step="0.01"
+                   value="{{ product.price if product else '' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Путь к фото:</label>
+            <input name="image_url" class="form-control" value="{{ product.image_url if product else '' }}">
+        </div>
+
+        <button class="btn btn-success">Сохранить</button>
+        <a href="/admin/products" class="btn btn-secondary">Назад</a>
+    </form>
+</div>
+
+<script>
+document.getElementById("productForm").onsubmit = function(e) {
+    e.preventDefault();
+
+    fetch("", {
+        method: "POST",
+        body: new FormData(this)
+    })
+    .then(r => r.json())
+    .then(data => {
+        window.location.href = "/admin/products";
+    });
+};
+</script>
+
+{% endblock %}

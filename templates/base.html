@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/logofav.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <title>{% block title %}Стройматериалы{% endblock %}</title>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">Стройматериалы</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/catalog' %}active{% endif %}"
+                                href="{{ url_for('catalog') }}">Каталог</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/about' %}active{% endif %}"
+                                href="{{ url_for('about') }}">О нас</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/cart' %}active{% endif %}"
+                                href="{{ url_for('cart_page') }}">Корзина</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/login' %}active{% endif %}"
+                                href="{{ url_for('login_page') }}">Вход</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path == '/register' %}active{% endif %}"
+                                href="{{ url_for('register_page') }}">Регистрация</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <div class="container">
+        <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
+            <div class="col mb-3">
+                <a href="/" class="d-flex align-items-center mb-3 link-body-emphasis text-decoration-none"
+                    aria-label="Bootstrap">
+                    <img src="{{ url_for('static', filename='assets/logo_banner.png') }}" alt="" width="77" height="70"
+                        aria-hidden="true">
+                </a>
+                <p class="text-body-secondary">&copy; 2025</p>
+            </div>
+            <div class="col mb-3"></div>
+            <div class="col mb-3">
+                <h5>Информация</h5>
+                <ul class="nav flex-column">
+           <li class="nav-item mb-2">
+                <a href="{{ url_for('index') }}" class="nav-link p-0 text-body-secondary">Главная</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="{{ url_for('catalog') }}" class="nav-link p-0 text-body-secondary">Каталог</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="{{ url_for('about') }}" class="nav-link p-0 text-body-secondary">О нас</a>
+            </li>
+            <li class="nav-item mb-2">
+                <a href="{{ url_for('cart_page') }}" class="nav-link p-0 text-body-secondary">Корзина</a>
+            </li>
+                </ul>
+            </div>
+            <div class="col mb-3">
+                <h5>Контакты</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a href="#" class="nav-link p-0 text-body-secondary">г.Город ул.Улица, 1</a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="#" class="nav-link p-0 text-body-secondary">+7 777 777 77 77</a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="#" class="nav-link p-0 text-body-secondary">email@mail.ru</a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a href="#" class="nav-link p-0 text-body-secondary">Пн-Вс: 9:00-20:00</a>
+                    </li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+</body>
+
+</html> 

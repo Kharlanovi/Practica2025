@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Каталог - Стройматериалы{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename='assets/Древесина.webp') }}" alt="" class="card-img-top" height="100%">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Древесина</h5>
+                        <p class="card-text flex-grow-1">Натуральная древесина для строительства и отделки</p>
+                        <a href="/catalog/wood" class="btn btn-primary mt-auto">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename='assets/плитка.jpg') }}" alt="" class="card-img-top" height="100%">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Керамика</h5>
+                        <p class="card-text flex-grow-1">Керамическая плитка и отделочные материалы</p>
+                        <a href="#" class="btn btn-primary mt-auto">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename='assets/полимеры.webp') }}" alt="" class="card-img-top" height="100%">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Полимеры</h5>
+                        <p class="card-text flex-grow-1">Современные полимерные материалы</p>
+                        <a href="#" class="btn btn-primary mt-auto">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename='assets/Композитные.jpg') }}" alt="" class="card-img-top">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Композитные</h5>
+                        <p class="card-text flex-grow-1">Современные композитные материалы</p>
+                        <a href="#" class="btn btn-primary mt-auto">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename='assets/Огнеупорные.png') }}" alt="" class="card-img-top" height="55%">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Огнеупорные материалы</h5>
+                        <p class="card-text flex-grow-1">Материалы с повышенной огнестойкостью</p>
+                        <a href="#" class="btn btn-primary mt-auto">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="{{ url_for('static', filename='assets/услуги.png') }}" alt="" class="card-img-top" height="55%">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Услуги</h5>
+                        <p class="card-text flex-grow-1">Профессиональные строительные услуги</p>
+                        <a href="#" class="btn btn-primary mt-auto">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
