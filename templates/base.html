@@ -43,6 +43,11 @@
                             <a class="nav-link {% if request.path == '/register' %}active{% endif %}"
                                 href="{{ url_for('register_page') }}">Регистрация</a>
                         </li>
+                         {% if session.get("role") == "admin" %}
+                        <li class="nav-item">
+                             <a class="nav-link" href="{{ url_for('admin_panel') }}">Админ</a>
+                        </li>
+                    {% endif %}
                     </ul>
                 </div>
             </div>

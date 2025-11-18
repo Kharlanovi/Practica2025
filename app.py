@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session ,redirect, url_for
 import os
 import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 
-PRODUCTS_FILE = "products.json"
+PRODUCTS_FILE = "products.json" 
 
 def load_products():
     with open(PRODUCTS_FILE, "r", encoding="utf-8") as f:
@@ -16,6 +16,18 @@ def save_products(products):
         json.dump(products, f, ensure_ascii=False, indent=4)
 
 PRODUCTS = load_products()
+
+USERS_FILE = "users.json"
+
+
+def load_users():
+    with open(USERS_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def save_users(users):
+    with open(USERS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(users, f, ensure_ascii=False, indent=4)
 
 @app.before_request
 def before_request():
@@ -42,13 +54,51 @@ def about():
 def cart_page():
     return render_template('box.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login_page():
+    if request.method == 'POST':
+        users = load_users()
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+
+        user = next((u for u in users if u["username"] == username and u["password"] == password), None)
+
+        if not user:
+            return "Неверный логин или пароль"
+
+        session["user_id"] = user["id"]
+        session["username"] = user["username"]
+        session["role"] = user["role"]
+
+        return redirect(url_for('index'))
+
     return render_template('login.html')
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register_page():
+    if request.method == 'POST':
+        users = load_users()
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if any(u["username"] == username for u in users):
+            return render_template('register.html', error="Пользователь уже существует")
+
+        new_user = {
+            "id": users[-1]["id"] + 1 if users else 1,
+            "username": username,
+            "password": password,
+            "role": "user"
+        }
+
+        users.append(new_user)
+        save_users(users)
+
+        return redirect(url_for('login_page'))
+
     return render_template('register.html')
+
+
 
 @app.route('/api/products')
 def get_products():
@@ -154,8 +204,11 @@ def clear_cart():
     
     return jsonify({'message': 'Cart cleared'})
 
-@app.route('/admin/products')
-def admin_products():
+@app.route('/admin')
+def admin_panel():
+    if session.get("role") != "admin":
+        return "Доступ запрещён"
+
     return render_template('admin_products.html', products=PRODUCTS)
 
 @app.route('/admin/products/edit/<int:product_id>', methods=['GET', 'POST'])
